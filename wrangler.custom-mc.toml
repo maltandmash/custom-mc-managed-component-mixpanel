@@ -1,5 +1,4 @@
 name = "custom-mc-managed-component-mixpanel"
-main = "index.js"
 compatibility_date = "2026-02-17"
 
 kv_namespaces = [
