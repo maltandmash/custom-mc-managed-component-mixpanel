@@ -340,6 +340,38 @@ describe('Mixpanel MC set_user_property event with $union type handler works cor
   })
 })
 
+describe('Mixpanel MC set_user_property event supports $distinct_id override', () => {
+  let setCookie: any
+
+  const fakeEvent = new Event('set_user_property', {}) as MCEvent
+  fakeEvent.payload = {
+    'user-set-action': 'profile-set-once',
+    $distinct_id: 'canonical_user_123',
+    plan: 'pro',
+  }
+  fakeEvent.client = {
+    ...dummyClient,
+    set: (key, value, opts) => {
+      setCookie = { key, value, opts }
+      return undefined
+    },
+  }
+
+  const fetchRequest = getSetPropertiesEventArgs(settings, fakeEvent)
+
+  it('uses the overridden distinct id for profile updates', async () => {
+    const body = JSON.parse(fetchRequest.opts?.body)[0]
+
+    expect(body.$distinct_id).toEqual(fakeEvent.payload.$distinct_id)
+    expect(body.$set_once.plan).toEqual(fakeEvent.payload.plan)
+    expect(body.$set_once).not.toHaveProperty('$distinct_id')
+  })
+
+  it('does not update the cookie', () => {
+    expect(setCookie).toBeUndefined()
+  })
+})
+
 describe('Mixpanel MC unset_user_property event handler works correctly', () => {
   let setCookie: any
 

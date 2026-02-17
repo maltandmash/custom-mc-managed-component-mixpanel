@@ -130,12 +130,12 @@ const getRequestBodyProperties = (event: MCEvent, token: string) => {
 
 const getProfileRequestBodyProperties = (event: MCEvent, token: string) => {
   const { client, payload } = event
-  const { $group_key, $group_id } = payload
+  const { $group_key, $group_id, $distinct_id } = payload
   const cookieData = handleCookieData(client, token)
 
   return {
     $token: token,
-    $distinct_id: cookieData.$userId || cookieData.distinct_id,
+    $distinct_id: $distinct_id || cookieData.$userId || cookieData.distinct_id,
     $group_key,
     $group_id,
   }
@@ -157,8 +157,8 @@ export const getTrackEventArgs = (
   const requestBody = {
     event: $event,
     properties: {
-      ...customFields,
       ...getRequestBodyProperties(event, token),
+      ...customFields,
     },
   }
 
@@ -239,6 +239,7 @@ export const getSetPropertiesEventArgs = (
     timestamp,
     $group_key,
     $group_id,
+    $distinct_id,
     ...customFields
   } = event.payload
   const { isEU, token } = settings
