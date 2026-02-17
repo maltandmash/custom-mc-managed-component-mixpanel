@@ -1,5 +1,5 @@
 {
-  "name": "managed-component-mixpanel",
+  "name": "custom-mc-managed-component-mixpanel",
   "compatibility_date": "2026-02-17",
   "main": "src/index.ts"
 }
