@@ -20,6 +20,16 @@ const SetActionsMap = {
   'group-union': '$union',
 }
 
+const resolveToken = (settingsToken: string | undefined, payload: MCEvent['payload']) => {
+  const payloadToken = ['@token', '$token', 'token']
+    .map((key) => payload?.[key])
+    .find((value) => typeof value === 'string' && value.length > 0) as
+    | string
+    | undefined
+
+  return settingsToken || payloadToken || ''
+}
+
 const getAPIEndpointPath = (eventType: string, action = '') => {
   switch (eventType) {
     case 'track':
@@ -152,7 +162,8 @@ export const getTrackEventArgs = (
     timestamp,
     ...customFields
   } = event.payload
-  const { isEU, token } = settings
+  const { isEU } = settings
+  const token = resolveToken(settings.token, event.payload)
 
   const requestBody = {
     event: $event,
@@ -177,7 +188,8 @@ export const getAliasEventArgs = (
   event: MCEvent
 ) => {
   const { alias } = event.payload
-  const { isEU, token } = settings
+  const { isEU } = settings
+  const token = resolveToken(settings.token, event.payload)
 
   const requestBody = {
     event: '$create_alias',
@@ -204,7 +216,8 @@ export const getIdentifyEventArgs = (
   event: MCEvent
 ) => {
   const { $identified_id } = event.payload
-  const { isEU, token } = settings
+  const { isEU } = settings
+  const token = resolveToken(settings.token, event.payload)
 
   const properties = getRequestBodyProperties(event, token)
 
@@ -236,13 +249,17 @@ export const getSetPropertiesEventArgs = (
   const {
     'user-set-action': action,
     'group-set-action': groupAction,
+    '@token': _atToken,
+    '$token': _dollarToken,
+    token: _token,
     timestamp,
     $group_key,
     $group_id,
     $distinct_id,
     ...customFields
   } = event.payload
-  const { isEU, token } = settings
+  const { isEU } = settings
+  const token = resolveToken(settings.token, event.payload)
   const actionKey =
     SetActionsMap[(action || groupAction) as keyof typeof SetActionsMap]
 
@@ -277,7 +294,8 @@ export const getUnsetPropertiesEventArgs = (
   event: MCEvent
 ) => {
   const { unsetList } = event.payload
-  const { isEU, token } = settings
+  const { isEU } = settings
+  const token = resolveToken(settings.token, event.payload)
 
   const requestBody = {
     ...getProfileRequestBodyProperties(event, token),
@@ -303,7 +321,8 @@ export const getDeleteProfileEventArgs = (
   event: MCEvent
 ) => {
   const { $ignore_alias } = event.payload
-  const { isEU, token } = settings
+  const { isEU } = settings
+  const token = resolveToken(settings.token, event.payload)
 
   const requestBody = {
     ...getProfileRequestBodyProperties(event, token),
