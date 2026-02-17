@@ -17,7 +17,7 @@ const SetActionsMap = {
   'group-set': '$set',
   'group-set-once': '$set_once',
   'group-remove-from-list': '$remove',
-  'group-union': '$union',
+2  'group-union': '$union',
 }
 
 const resolveToken = (settingsToken: string | undefined, payload: MCEvent['payload']) => {
