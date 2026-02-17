@@ -13,9 +13,31 @@ Find out more about Managed Components [here](https://blog.cloudflare.com/zaraz-
 
 ## 🚀 Quickstart local dev environment
 
-1. Make sure you're running node version >=18.
+1. Make sure you're running node version >=20.
 2. Install dependencies with `npm i`
 3. Run unit test watcher with `npm run test:dev`
+
+## 🔧 Setup in Cloudflare Zaraz
+
+1. Create account-specific KV binding config:
+   - Run `npm run setup:kv`
+   - This reuses an existing KV namespace with the expected title in the current account, or creates it if missing.
+   - Then it writes the resolved namespace id into `wrangler.custom-mc.toml`.
+   - Use an existing KV from Cloudflare dashboard: `bash scripts/setup-kv.sh --id <namespace_id>`
+   - Optional custom KV title when creating one: `bash scripts/setup-kv.sh --name my-custom-kv-title`
+2. Deploy this Managed Component with Wrangler:
+   - Deploy with `npx wrangler deploy -c wrangler.custom-mc.toml`.
+   - CI-friendly alternative using template + env vars:
+     `KV_ID="${KV_NAMESPACE_ID:-$KV_NAMESPACE_ID_FALLBACK}"; test -n "$KV_ID" && sed "s/__KV_NAMESPACE_ID__/$KV_ID/g" wrangler.custom-mc.template.toml > wrangler.custom-mc.toml && printf "y\nn\n" | npx managed-component-to-cloudflare-worker ./dist/index.js managed-component-mixpanel ./wrangler.custom-mc.toml`
+3. In Zaraz, add the deployed custom component as a tool.
+4. Configure tool settings:
+   - `@token` = your Mixpanel project token.
+   - `isEU` = `true` if your Mixpanel project is in EU data residency.
+   - Keep `isEU` as `false` for US projects.
+5. Save and publish.
+6. Validate requests in Zaraz logs:
+   - EU should call `https://api-eu.mixpanel.com/...`
+   - US should call `https://api.mixpanel.com/...`
 
 ## ⚙️ Tool Settings
 

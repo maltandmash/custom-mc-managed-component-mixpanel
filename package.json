@@ -11,6 +11,7 @@
     "typecheck": "tsc --project tsconfig.build.json --noEmit",
     "test": "vitest run --globals --passWithNoTests",
     "test:dev": "vitest --globals",
+    "setup:kv": "bash scripts/setup-kv.sh",
     "release": "npm run build && npm version patch && npm publish"
   },
   "repository": {
