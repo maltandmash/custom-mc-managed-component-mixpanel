@@ -1,0 +1,5 @@
+{
+  "name": "managed-component-mixpanel",
+  "compatibility_date": "2026-02-17",
+  "main": "src/index.ts"
+}
