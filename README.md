@@ -22,31 +22,37 @@ Find out more about Managed Components [here](https://blog.cloudflare.com/zaraz-
 ### Cloudflare Worker Setup (Git Deploy)
 
 1. Fork this repository to your own GitHub account.
-2. Create a Workers KV namespace in Cloudflare:
+2. In Cloudflare, create a Workers KV namespace:
    - Go to `Storage & Databases` -> `Workers KV` -> `Create Instance`.
-   - Name it `managed-component-mixpanel-kv`.
-   - Copy the namespace ID (32-char hex).
-3. Create the Worker from your fork:
+   - Name: `managed-component-mixpanel-kv`.
+   - Copy the generated Namespace ID (32-char hex) and save it.
+
+<img width="1362" height="auto" alt="Go to Workers KV and Create Instance" src="https://github.com/user-attachments/assets/209861eb-e5fe-4bb7-bda0-c5f0a95554ab" />
+<img width="710" height="350" alt="Name managed-component-mixpanel-kv" src="https://github.com/user-attachments/assets/f4e50113-1e8f-4f43-956a-66e51bc38ca7" />
+<img width="1380" height="auto" alt="Copy the generated Namespace ID" src="https://github.com/user-attachments/assets/a223e8c9-25db-4b6d-a753-1abb7d96b40a" />
+
+3. Create the Worker:
    - Go to `Workers & Pages` -> `Create Application`.
    - Click `Continue with GitHub`.
-   - Select your forked repository.
-4. Configure build/deploy in Cloudflare:
+   - Connect GitHub and select your forked repository.
+
+<img width="1367" height="auto" alt="Create the Worker" src="https://github.com/user-attachments/assets/694a1812-6fd4-4620-ac1e-bd60da6b4470" />
+<img width="614" height="425" alt="Create the Worker with GitHub" src="https://github.com/user-attachments/assets/1250c352-7cc2-4143-ab58-5f15cd29bc24" />
+<img width="625" height="376" alt="Select the repository" src="https://github.com/user-attachments/assets/216ff370-cf4d-4a2e-ab8a-ab6dad36c023" />
+
+4. Set up the application:
    - Build command: `npm run build`
    - Deploy command:
      `KV_ID="${KV_NAMESPACE_ID:-$KV_NAMESPACE_ID_FALLBACK}"; test -n "$KV_ID" || { echo "Missing KV namespace ID"; exit 1; }; sed "s/__KV_NAMESPACE_ID__/$KV_ID/g" wrangler.custom-mc.template.toml > wrangler.custom-mc.toml && printf "y\nn\n" | npx managed-component-to-cloudflare-worker ./dist/index.js custom-mc-managed-component-mixpanel ./wrangler.custom-mc.toml`
-   - Worker name: `custom-mc-managed-component-mixpanel`.
-5. Run first deploy from Cloudflare UI.
-   - First deploy can fail before variables/bindings are fully configured.
-6. Add KV binding in the Worker:
-   - Go to `Workers & Pages` -> `custom-mc-managed-component-mixpanel` -> `Bindings` -> `Add Binding`.
-   - Type: `KV namespace`
-   - Variable name: `KV`
-   - KV namespace: `managed-component-mixpanel-kv`
-7. Add KV namespace ID as a build variable:
-   - Go to `Workers & Pages` -> `custom-mc-managed-component-mixpanel` -> `Settings` -> `Build` -> `Variables and secrets`.
-   - Add `KV_NAMESPACE_ID` with value set to the namespace ID copied earlier.
-8. Redeploy:
-   - Go to `Deployments` -> latest build -> `Retry build`.
+   - In `Advanced settings`, add environment variable:
+     - Name: `KV_NAMESPACE_ID`
+     - Value: the namespace ID copied in step 2
+   - Keep worker name: `custom-mc-managed-component-mixpanel`
+
+<img width="617" height="auto" alt="Set up application build and deploy commands" src="https://github.com/user-attachments/assets/62113d87-f8b1-46bc-a7e6-ea013d4c2b82" />
+<img width="596" height="auto" alt="Add KV_NAMESPACE_ID build variable" src="https://github.com/user-attachments/assets/2aea37c3-ce96-4c29-9b70-57808a3f3c54" />
+
+5. Deploy.
 
 ### Mixpanel Custom Managed Component setup in Zaraz
 
