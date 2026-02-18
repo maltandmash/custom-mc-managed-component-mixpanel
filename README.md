@@ -17,7 +17,7 @@ Find out more about Managed Components [here](https://blog.cloudflare.com/zaraz-
 2. Install dependencies with `npm i`
 3. Run unit test watcher with `npm run test:dev`
 
-## 🔧 Setup in Cloudflare Zaraz
+## 🔧 Setup in Cloudflare & Zaraz
 
 ### Cloudflare Worker Setup (Git Deploy)
 
