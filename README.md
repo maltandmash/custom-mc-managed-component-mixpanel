@@ -66,7 +66,7 @@ Find out more about Managed Components [here](https://blog.cloudflare.com/zaraz-
 
 Use a `set_user_property` action to set user profile fields on first login/sign-up.
 
-1. Before any `zaraz.track(...)` calls, set a unique user id via `zaraz.set(...)` so `$distinct_id` is available.
+1. Before any `zaraz.track(...)` calls, set a stable user id via `zaraz.set(...)` so events include `$user_id` and Mixpanel can merge with its generated `$device_id` (Simplified ID Merge API flow).
 2. Send a track event with profile data, for example:
 
 ```js
@@ -108,11 +108,14 @@ zaraz.track('mp_profile_setup_completed', {
 
 ### Mixpanel Project Token `string`
 
-The Mixpanel Project Token is the unique identifier of your Mixpanel account. [Learn more](https://help.mixpanel.com/hc/en-us/articles/115004502806-Find-Project-Token-)
+The Mixpanel Project Token is the unique identifier of your Mixpanel project. In Zaraz, set this as default field `@token`. It can also be overridden per event via payload keys `@token`, `$token`, or `token`. [Learn more](https://help.mixpanel.com/hc/en-us/articles/115004502806-Find-Project-Token-)
 
 ### Is EU region `boolean`
 
-Set it ON if you are enrolled in EU Data Residency. [Learn more](https://help.mixpanel.com/hc/en-us/articles/360039135652-Data-Residency-in-EU)
+Set `isEU` to `true` if you are enrolled in EU Data Residency. Endpoint routing is:
+- `true` -> `https://api-eu.mixpanel.com/...`
+- `false` (or unset) -> `https://api.mixpanel.com/...`
+[Learn more](https://help.mixpanel.com/hc/en-us/articles/360039135652-Data-Residency-in-EU)
 
 ## 🧱 Fields Description
 
@@ -122,9 +125,12 @@ Set it ON if you are enrolled in EU Data Residency. [Learn more](https://help.mi
 
 `event` is the event name that will be sent with a Track event. [Learn more](https://developer.mixpanel.com/reference/track-event)
 
-### Identified ID `string`
+### Identified ID `string` (legacy)
 
-`$identified_id` is a unique user ID that will be connected to the anonymous distinct_id of the user. It must be provided with Identify event. [Learn more](https://help.mixpanel.com/hc/en-us/articles/3600410397711#user-identification)
+`$identified_id` is part of the older identity flow and is kept for backward compatibility. Current recommended setup is:
+- send `$user_id` on events and rely on Mixpanel-generated `$device_id` for Simplified ID Merge
+- send `$distinct_id` when updating profile data (`set_user_property`)
+[Learn more](https://help.mixpanel.com/hc/en-us/articles/3600410397711#user-identification)
 
 ### Alias `string`
 
@@ -140,7 +146,7 @@ Set it ON if you are enrolled in EU Data Residency. [Learn more](https://help.mi
 
 ### List of properties to delete `string`
 
-`unsetList` is a comma separated list of properties to delete. It must be provided with Delete user properties or Delete group properties events. [Learn more](https://developer.mixpanel.com/reference/group-set-property)
+`unsetList` is a comma-separated list of properties to delete. Whitespace is trimmed, so `email, first_name, last_name` is valid. It must be provided with Delete user properties or Delete group properties events. [Learn more](https://developer.mixpanel.com/reference/group-set-property)
 
 ### Ignore alias `boolean`
 
@@ -148,11 +154,25 @@ Set it ON if you are enrolled in EU Data Residency. [Learn more](https://help.mi
 
 ### User profile action `string`
 
-`user-set-action` specifies the action to be applied to a user profile. It must be provided with Update user properties event. [Learn more](https://developer.mixpanel.com/reference/profile-set)
+`user-set-action` specifies the action to apply to a user profile. It must be provided with Update user properties events.
+Supported values:
+- `profile-set`
+- `profile-set-once`
+- `profile-numerical-add`
+- `profile-union`
+- `profile-list-append`
+- `profile-list-remove`
+[Learn more](https://developer.mixpanel.com/reference/profile-set)
 
 ### Group profile action `string`
 
-`group-set-action` specifies the action to be applied to a group profile. It must be provided with Update group properties event. [Learn more](https://developer.mixpanel.com/reference/group-set-property)
+`group-set-action` specifies the action to apply to a group profile. It must be provided with Update group properties events.
+Supported values:
+- `group-set`
+- `group-set-once`
+- `group-union`
+- `group-remove-from-list`
+[Learn more](https://developer.mixpanel.com/reference/group-set-property)
 
 ## 📝 License
 
