@@ -57,8 +57,14 @@ const dummyClient = {
 const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
+type SetCookieCall = {
+  key: string
+  value: string
+  opts?: unknown
+}
+
 describe('Mixpanel MC track event handler works correctly', () => {
-  let setCookie: any
+  let setCookie: SetCookieCall | undefined
 
   const fakeEvent = new Event('track', {}) as MCEvent
   fakeEvent.payload = {
@@ -116,7 +122,7 @@ describe('Mixpanel MC track event handler works correctly', () => {
 })
 
 describe('Mixpanel MC identify event handler works correctly', () => {
-  let setCookie: any
+  let setCookie: SetCookieCall | undefined
 
   const fakeEvent = new Event('identify', {}) as MCEvent
   fakeEvent.payload = {
@@ -190,7 +196,7 @@ describe('Mixpanel MC identify event handler works correctly', () => {
 })
 
 describe('Mixpanel MC alias event handler works correctly', () => {
-  let setCookie: any
+  let setCookie: SetCookieCall | undefined
 
   const fakeEvent = new Event('create_alias', {}) as MCEvent
   fakeEvent.payload = {
@@ -247,7 +253,7 @@ describe('Mixpanel MC alias event handler works correctly', () => {
 })
 
 describe('Mixpanel MC set_group_property event handler works correctly', () => {
-  let setCookie: any
+  let setCookie: SetCookieCall | undefined
 
   const fakeEvent = new Event('set_group_property', {}) as MCEvent
   fakeEvent.payload = {
@@ -294,7 +300,7 @@ describe('Mixpanel MC set_group_property event handler works correctly', () => {
 })
 
 describe('Mixpanel MC set_user_property event with $union type handler works correctly', () => {
-  let setCookie: any
+  let setCookie: SetCookieCall | undefined
 
   const fakeEvent = new Event('set_user_property', {}) as MCEvent
   fakeEvent.payload = {
@@ -341,7 +347,7 @@ describe('Mixpanel MC set_user_property event with $union type handler works cor
 })
 
 describe('Mixpanel MC set_user_property event supports $distinct_id override', () => {
-  let setCookie: any
+  let setCookie: SetCookieCall | undefined
 
   const fakeEvent = new Event('set_user_property', {}) as MCEvent
   fakeEvent.payload = {
@@ -373,7 +379,7 @@ describe('Mixpanel MC set_user_property event supports $distinct_id override', (
 })
 
 describe('Mixpanel MC unset_user_property event handler works correctly', () => {
-  let setCookie: any
+  let setCookie: SetCookieCall | undefined
 
   const fakeEvent = new Event('unset_user_property', {}) as MCEvent
   fakeEvent.payload = {
@@ -418,7 +424,7 @@ describe('Mixpanel MC unset_user_property event handler works correctly', () => 
 })
 
 describe('Mixpanel MC delete_group_profile event handler works correctly', () => {
-  let setCookie: any
+  let setCookie: SetCookieCall | undefined
 
   const fakeEvent = new Event('delete_group_profile', {}) as MCEvent
   fakeEvent.payload = {
@@ -462,7 +468,7 @@ describe('Mixpanel MC delete_group_profile event handler works correctly', () =>
 })
 
 describe('Mixpanel MC delete_user_profile event handler works correctly', () => {
-  let setCookie: any
+  let setCookie: SetCookieCall | undefined
 
   const fakeEvent = new Event('delete_user_profile', {}) as MCEvent
   fakeEvent.payload = {
